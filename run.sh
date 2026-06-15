@@ -23,3 +23,5 @@ mariadb -u lab7_user -t lab7 \
 cp ./build/populateData.sql ./submission/
 cp ./sql/createLibrary.sql ./sql/activity.sql ./sql/queries.sql ./submission/
 cp README.txt ./submission/
+
+echo "Lab ran successfully"

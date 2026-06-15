@@ -3,10 +3,13 @@
 set -e
 
 cd "$(dirname "$0")" || exit 1
-rm -rf ./build/
+rm -rf ./build
+mkdir ./build
 ./.venv/bin/python ./scripts/build_lab7.py
 mariadb -u lab7_user < ./sql/main.sql
 
+rm -rf ./submission
+mkdir ./submission
 # This syntax emulates tee command usage without
 # explicitly entering the db, making this much faster
 # to replicate. I know it is technically not in the

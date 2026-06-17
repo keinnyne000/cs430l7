@@ -71,12 +71,12 @@ def publisherToDF(filePath: str):
     return pd.DataFrame(lines, columns=cols)
             
 
-def membersToDF(filePath: str, library = "Main"):
+def membersToDF(filePath: str, libraryName = "Main"):
     # In: Member, Name, Gender, DOB
     # In2: ISBN, CheckinDate, CheckoutDate
     # MemberID, FirstName, LastName, DOB, Gender, list[Borrows]
     memberCols = ['MemberID', 'FirstName', 'LastName', 'Gender', 'DOB']
-    checkoutCols = ['MemberID', 'ISBN', 'CheckoutDate', 'CheckinDate', 'Library']
+    checkoutCols = ['MemberID', 'ISBN', 'CheckoutDate', 'CheckinDate', 'LibraryName']
 
     rows = getRows(filePath)
     lastMemberID = ""
@@ -94,7 +94,7 @@ def membersToDF(filePath: str, library = "Main"):
             checkinDate = None
             if(len(row) > 2):
                 checkinDate = formatDate(row[2])
-            checkoutLines.append((lastMemberID, row[0], formatDate(row[1]), checkinDate, library))
+            checkoutLines.append((lastMemberID, row[0], formatDate(row[1]), checkinDate, libraryName))
     
     checkoutDF = pd.DataFrame(checkoutLines, columns=checkoutCols)
     memberDF = pd.DataFrame(memberLines, columns=memberCols)

@@ -24,14 +24,22 @@ CREATE TABLE Member (
     MemberID INT PRIMARY KEY NOT NULL,
     LastName VARCHAR(64) NOT NULL,
     FirstName VARCHAR(64) NOT NULL,
-    DOB DATE NOT NULL
+    DOB DATE NOT NULL,
+    Gender VARCHAR(1) NOT NULL
 );
 
 CREATE TABLE Library(
-    LibraryName VARCHAR(64) PRIMARY KEY NOT NULL,
+    Name VARCHAR(64) PRIMARY KEY NOT NULL,
     Street VARCHAR(64) NOT NULL,
     City VARCHAR(64) NOT NULL,
     State VARCHAR(2) NOT NULL
+);
+
+CREATE TABLE Audit (
+    AuditID INT PRIMARY KEY NOT NULL,
+    TableName VARCHAR(32) NOT NULL,
+    AuditAction VARCHAR(32) NOT NULL,
+    ActionDateTime TIMESTAMP NOT NULL
 );
 
 -- Relations:
@@ -77,49 +85,16 @@ CREATE TABLE LocatedAt (
     PRIMARY KEY(LibraryName, ISBN)
 );
 
-CREATE TABLE Audit (
-    AuditID INT PRIMARY KEY NOT NULL,
-    TableName VARCHAR(32) NOT NULL,
-    AuditAction VARCHAR(32) NOT NULL,
-    ActionDateTime TIMESTAMP NOT NULL
-);
-
--- SELECT 'Book' AS TableName;
--- SELECT * FROM Book ORDER BY isbn;
-
--- SELECT 'Member' AS TableName;
--- SELECT * FROM Member ORDER BY LastName, FirstName;
-
--- SELECT 'Author' AS TableName;
--- SELECT * FROM Author ORDER BY LastName, FirstName;
-
--- SELECT 'Publisher' AS TableName;
--- SELECT * FROM Publisher ORDER BY Name;
-
--- SELECT 'Phone' AS TableName;
--- SELECT * FROM Phone ORDER BY PhoneNumber;
-
--- SELECT 'Library' AS TableName;
--- SELECT * FROM Library;
-
--- SELECT 'Audit' AS TableName;
--- SELECT * FROM Audit;
-
--- -- RELATIONS
--- SELECT 'AuthorPhone' AS TableName;
--- SELECT * FROM AuthorPhone;
-
--- SELECT 'BorrowedBy' AS TableName;
--- SELECT * FROM BorrowedBy;
-
--- SELECT 'PublishedBy' AS TableName;
--- SELECT * FROM PublishedBy;
-
--- SELECT 'PublisherPhone' AS TableName;
--- SELECT * FROM PublisherPhone;
-
--- SELECT 'WrittenBy' AS TableName;
--- SELECT * FROM WrittenBy;
-
--- SELECT 'LocatedAt' AS TableName;
--- SELECT * FROM LocatedAt;
+-- DELIMITER //
+-- CREATE TRIGGER update_copies
+-- AFTER UPDATE ON BorrowedBy
+-- FOR EACH ROW BEGIN
+    -- UPDATE LocatedAt la
+    -- SET la.CopiesNotCheckedOut = la.TotalCopies - (
+        -- SELECT COUNT(*) FROM BorrowedBy bb
+        -- WHERE bb.ISBN = NEW.ISBN 
+        -- AND bb.CheckinDate is NULL
+    -- )
+    -- WHERE la.ISBN = NEW.ISBN;
+-- END//
+-- DELIMITER ;

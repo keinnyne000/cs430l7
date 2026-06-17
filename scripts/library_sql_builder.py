@@ -18,6 +18,8 @@ def loadData(dataDir: str | Path) -> dict[str, pd.DataFrame]:
     writtenDF = pd.concat([writtenDF, writtenDF2], ignore_index=True)
     bookDF = pd.concat([bookDF, bookDF2], ignore_index=True)
 
+    libraryDF = rd.librariesToDF(dataDir / "libraries.txt")
+
     return {
         "authorDF": authorDF,
         "publisherDF": publisherDF,
@@ -25,6 +27,7 @@ def loadData(dataDir: str | Path) -> dict[str, pd.DataFrame]:
         "membersDF": membersDF,
         "writtenDF": writtenDF,
         "bookDF": bookDF,
+        "libraryDF": libraryDF,
     }
 
 
@@ -80,7 +83,7 @@ def buildBook(bookDF):
 
 
 def buildMember(membersDF):
-    return membersDF[['MemberID', 'LastName', 'FirstName', 'DOB']].drop_duplicates()
+    return membersDF[['MemberID', 'LastName', 'FirstName', 'DOB', 'Gender']].drop_duplicates()
 
 
 def buildBorrowedBy(checkoutDF):
@@ -110,6 +113,25 @@ def buildPublisherPhone(publisherDF):
         .drop_duplicates()
     )
 
+def buildLibrary(libraryDF):
+    return libraryDF
+
+def buildLocatedAt(bookDF, checkoutDF):
+    cols = ['LibraryName', 'ISBN', 'TotalCopies', 'CopiesNotCheckedOut',
+            'Shelf', 'Floor']
+    result = []
+    for _, book in bookDF.iterrows():
+        checkedOut = (checkoutDF["ISBN"].eq(book['ISBN']) &
+                      checkoutDF["CheckinDate"].isna() &
+                      checkoutDF['LibraryName'].eq(book['LibraryName'])).sum()
+        notChecked = book['NumberOfCopies'] - checkedOut
+
+        result.append((book['LibraryName'], book['ISBN'],
+                       book['NumberOfCopies'], notChecked, book['Shelf'],
+                       book['Floor']))
+    
+    return pd.DataFrame(result, columns=cols)
+
 
 def buildAll(dataDir: str | Path) -> str:
     data = loadData(dataDir)
@@ -125,6 +147,9 @@ def buildAll(dataDir: str | Path) -> str:
         "PublishedBy": buildPublishedBy(data["bookDF"]),
         "AuthorPhone": buildAuthorPhone(data["authorDF"]),
         "PublisherPhone": buildPublisherPhone(data["publisherDF"]),
+        # LAB 7
+        "LocatedAt": buildLocatedAt(data['bookDF'], data['checkoutDF']),
+        "Library": buildLibrary(data['libraryDF'])
     }
 
     queries = []

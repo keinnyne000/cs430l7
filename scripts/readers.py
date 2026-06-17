@@ -21,6 +21,19 @@ def getRows(filePath: str):
         lines.append(new_line)
     return lines
 
+def librariesToDF(filePath) -> pd.DataFrame:
+    # NAME, ADDRESS
+    # Main,42 South Main,Fort Collins,CO
+    # -> NAME, STREET, CITY, STATE
+    # Main, 42 South Main, Fort Collins, CO
+
+    cols = ['Name', 'Street', 'City', 'State']
+    rows = getRows(filePath)
+    lines = []
+    for row in rows:
+        lines.append((row[0], row[1], row[2], row[3]))
+
+    return pd.DataFrame(lines, columns=cols) 
 
 def authorToDF(filePath) -> pd.DataFrame:
     # In Cols: [AuthorID, Name, PhoneNumber(type)...]
@@ -58,12 +71,12 @@ def publisherToDF(filePath: str):
     return pd.DataFrame(lines, columns=cols)
             
 
-def membersToDF(filePath: str):
+def membersToDF(filePath: str, library = "Main"):
     # In: Member, Name, Gender, DOB
     # In2: ISBN, CheckinDate, CheckoutDate
     # MemberID, FirstName, LastName, DOB, Gender, list[Borrows]
     memberCols = ['MemberID', 'FirstName', 'LastName', 'Gender', 'DOB']
-    checkoutCols = ['MemberID', 'ISBN', 'CheckoutDate', 'CheckinDate']
+    checkoutCols = ['MemberID', 'ISBN', 'CheckoutDate', 'CheckinDate', 'Library']
 
     rows = getRows(filePath)
     lastMemberID = ""
@@ -81,7 +94,7 @@ def membersToDF(filePath: str):
             checkinDate = None
             if(len(row) > 2):
                 checkinDate = formatDate(row[2])
-            checkoutLines.append((lastMemberID, row[0], formatDate(row[1]), checkinDate))
+            checkoutLines.append((lastMemberID, row[0], formatDate(row[1]), checkinDate, library))
     
     checkoutDF = pd.DataFrame(checkoutLines, columns=checkoutCols)
     memberDF = pd.DataFrame(memberLines, columns=memberCols)
@@ -92,7 +105,8 @@ def bookToDF(filePath: str, libraryName: str):
     # ISBN, NumberOfCopies, Shelf, Floor, Title, Publisher, DatePublished
     # AuthorIDs
     writtenCols = ['AuthorID', 'ISBN']
-    bookCols = ['ISBN', 'NumberOfCopies', 'Shelf', 'Floor', 'Title', 'PublisherID', 'DatePublished', 'YearPublished', 'LibraryName']
+    bookCols = ['ISBN', 'NumberOfCopies', 'Shelf', 'Floor', 'Title', 
+                'PublisherID', 'DatePublished', 'YearPublished', 'LibraryName']
 
     rows = getRows(filePath)
     lastISBN = ""

@@ -137,19 +137,20 @@ def buildAll(dataDir: str | Path) -> str:
     data = loadData(dataDir)
 
     tables = {
+
         "Author": buildAuthor(data["authorDF"]),
         "Phone": buildPhone(data["authorDF"], data["publisherDF"]),
         "Publisher": buildPublisher(data["publisherDF"]),
         "Book": buildBook(data["bookDF"]),
         "Member": buildMember(data["membersDF"]),
+        "Library": buildLibrary(data['libraryDF']),
+
         "BorrowedBy": buildBorrowedBy(data["checkoutDF"]),
         "WrittenBy": buildWrittenBy(data["writtenDF"]),
         "PublishedBy": buildPublishedBy(data["bookDF"]),
         "AuthorPhone": buildAuthorPhone(data["authorDF"]),
         "PublisherPhone": buildPublisherPhone(data["publisherDF"]),
-        # LAB 7
         "LocatedAt": buildLocatedAt(data['bookDF'], data['checkoutDF']),
-        "Library": buildLibrary(data['libraryDF'])
     }
 
     queries = []

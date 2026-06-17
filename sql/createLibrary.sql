@@ -1,7 +1,7 @@
-create table Author (
+CREATE TABLE Author (
     AuthorID INT PRIMARY KEY,
-    FirstName varchar(64) NOT NULL,
-    LastName varchar(64) NOT NULL
+    FirstName VARCHAR(64) NOT NULL,
+    LastName VARCHAR(64) NOT NULL
 );
 
 CREATE TABLE Phone (
@@ -28,7 +28,7 @@ CREATE TABLE Member (
     Gender VARCHAR(1) NOT NULL
 );
 
-CREATE TABLE Library(
+CREATE TABLE Library (
     Name VARCHAR(64) PRIMARY KEY NOT NULL,
     Street VARCHAR(64) NOT NULL,
     City VARCHAR(64) NOT NULL,
@@ -43,46 +43,65 @@ CREATE TABLE Audit (
 );
 
 -- Relations:
+
 CREATE TABLE BorrowedBy (
-    MemberID INT,
-    ISBN VARCHAR(16),
-    CheckoutDate DATE,
+    MemberID INT NOT NULL,
+    ISBN VARCHAR(16) NOT NULL,
+    CheckoutDate DATE NOT NULL,
     CheckinDate DATE,
-    PRIMARY KEY (MemberID, ISBN, CheckoutDate)
+    PRIMARY KEY (MemberID, ISBN, CheckoutDate),
+
+    FOREIGN KEY (MemberID) REFERENCES Member(MemberID),
+    FOREIGN KEY (ISBN) REFERENCES Book(ISBN)
 );
 
 CREATE TABLE WrittenBy (
-    AuthorID INT,
-    ISBN VARCHAR(16),
-    PRIMARY KEY (AuthorID, ISBN)
+    AuthorID INT NOT NULL,
+    ISBN VARCHAR(16) NOT NULL,
+    PRIMARY KEY (AuthorID, ISBN),
+
+    FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID),
+    FOREIGN KEY (ISBN) REFERENCES Book(ISBN)
 );
 
 CREATE TABLE PublishedBy (
-    PublisherID INT,
-    ISBN VARCHAR(16),
-    PRIMARY KEY (PublisherID, ISBN)
+    PublisherID INT NOT NULL,
+    ISBN VARCHAR(16) NOT NULL,
+    PRIMARY KEY (PublisherID, ISBN),
+
+    FOREIGN KEY (PublisherID) REFERENCES Publisher(PublisherID),
+    FOREIGN KEY (ISBN) REFERENCES Book(ISBN)
 );
 
 CREATE TABLE AuthorPhone (
-    AuthorID INT,
-    PhoneNumber VARCHAR(20),
-    PRIMARY KEY (AuthorID, PhoneNumber)
+    AuthorID INT NOT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    PRIMARY KEY (AuthorID, PhoneNumber),
+
+    FOREIGN KEY (AuthorID) REFERENCES Author(AuthorID),
+    FOREIGN KEY (PhoneNumber) REFERENCES Phone(PhoneNumber)
 );
 
 CREATE TABLE PublisherPhone (
-    PublisherID INT,
-    PhoneNumber VARCHAR(20),
-    PRIMARY KEY (PublisherID, PhoneNumber)
+    PublisherID INT NOT NULL,
+    PhoneNumber VARCHAR(20) NOT NULL,
+    PRIMARY KEY (PublisherID, PhoneNumber),
+
+    FOREIGN KEY (PublisherID) REFERENCES Publisher(PublisherID),
+    FOREIGN KEY (PhoneNumber) REFERENCES Phone(PhoneNumber)
 );
 
 CREATE TABLE LocatedAt (
-    LibraryName VARCHAR(64),
-    ISBN VARCHAR(16),
+    LibraryName VARCHAR(64) NOT NULL,
+    ISBN VARCHAR(16) NOT NULL,
     TotalCopies INT,
     CopiesNotCheckedOut INT,
     Shelf INT,
     Floor INT,
-    PRIMARY KEY(LibraryName, ISBN)
+    PRIMARY KEY (LibraryName, ISBN),
+
+    FOREIGN KEY (LibraryName) REFERENCES Library(Name),
+    FOREIGN KEY (ISBN) REFERENCES Book(ISBN)
 );
 
 -- DELIMITER //

@@ -42,8 +42,6 @@ CREATE TABLE Audit (
     ActionDateTime TIMESTAMP NOT NULL
 );
 
--- Relations:
-
 CREATE TABLE BorrowedBy (
     MemberID INT NOT NULL,
     ISBN VARCHAR(16) NOT NULL,
@@ -103,17 +101,3 @@ CREATE TABLE LocatedAt (
     FOREIGN KEY (LibraryName) REFERENCES Library(Name),
     FOREIGN KEY (ISBN) REFERENCES Book(ISBN)
 );
-
--- DELIMITER //
--- CREATE TRIGGER update_copies
--- AFTER UPDATE ON BorrowedBy
--- FOR EACH ROW BEGIN
-    -- UPDATE LocatedAt la
-    -- SET la.CopiesNotCheckedOut = la.TotalCopies - (
-        -- SELECT COUNT(*) FROM BorrowedBy bb
-        -- WHERE bb.ISBN = NEW.ISBN 
-        -- AND bb.CheckinDate is NULL
-    -- )
-    -- WHERE la.ISBN = NEW.ISBN;
--- END//
--- DELIMITER ;
